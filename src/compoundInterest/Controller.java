@@ -9,8 +9,6 @@ import java.util.ArrayList;
 public class Controller {
     private ArrayList<Double> resultValues;
     public BarChart<Integer, Double> compBarChart;
-    public CategoryAxis timeAxis;
-    public NumberAxis valueAxis;
     public TextField initInvestmentField;
     public TextField rateField;
     public TextField growthPeriodField;
@@ -21,9 +19,12 @@ public class Controller {
         this.resultValues = new ArrayList<>();
     }
 
+    // Updates information for every key typed into the text fields
     public void update() {
         double initial = 0, rate = 0, monthly = 0;
         int period = 0;
+
+        // Sets respective values to 0 by default if text field is empty
         if (!this.initInvestmentField.getText().isEmpty()) {
             initial = Double.parseDouble(this.initInvestmentField.getText());
         }
@@ -33,23 +34,26 @@ public class Controller {
         if (!this.monthlyPmtField.getText().isEmpty()) {
             monthly = Double.parseDouble(this.monthlyPmtField.getText());
         }
-
         if (!this.growthPeriodField.getText().isEmpty()) {
             period = Integer.parseInt(this.growthPeriodField.getText());
         }
 
         this.valueComputer(initial, rate, monthly, period);
 
+        // Converts array list to chart compatible data
         XYChart.Series data = new XYChart.Series();
         for (int i = 0; i < this.resultValues.size(); i++) {
             data.getData().add(new XYChart.Data(String.valueOf((i + 1)), this.resultValues.get(i)));
         }
+
+        // Plots chart data
         this.compBarChart.getData().clear();
-        this.compBarChart.setAnimated(true);
+        this.compBarChart.setAnimated(true); // animation turned on and off due to JavaFX animation 'buggy-ness' affecting x-axis
         this.compBarChart.getData().addAll(data);
         this.compBarChart.setAnimated(false);
     }
 
+    // Populates array list of annual compound interest data and displays final amount
     private void valueComputer(double initial, double rate, double monthly, int period) {
         this.resultValues = new ArrayList<>();
         double yearAmount = initial;
